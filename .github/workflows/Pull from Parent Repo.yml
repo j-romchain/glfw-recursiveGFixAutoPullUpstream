@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with: 
+        fetch-depth: 0
     - name: Check and merge from upstream
       run: |
         tree -alqQC --dirsfirst ./
@@ -54,7 +56,7 @@ jobs:
           echo "Performing action for no conflicts..."
           # Example: Run tests (replace with your desired command)
           # I would potentially build and release here, but thats hard.
-      
+          
         else
           echo 7
           echo "Conflicts detected during merge with upstream master."
