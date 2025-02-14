@@ -13,7 +13,6 @@ jobs:
         fetch-depth: 0
     - name: Check and merge from upstream
       run: |
-        tree -alqQC --dirsfirst ./
         echo 1
         # Configure Git to use your repo (important!)
       
@@ -44,7 +43,7 @@ jobs:
         merge_result=$(git merge --no-commit upstream/master 2>&1) # Use upstream/master
       
       
-        echo 4$merge_result4
+        echo 4$merge_result
         if [[ ! "$merge_result" =~ "Automatic merge failed" && ! "$merge_result" =~ "CONFLICT" ]]; then
 
           echo 5
