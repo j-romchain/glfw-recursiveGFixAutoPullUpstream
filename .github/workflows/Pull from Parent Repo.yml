@@ -41,7 +41,7 @@ jobs:
           
         elif [[ "$merge_result" =~ "Already up to date" ]]; then
           echo "No upstream changes detected, this was all useless."
-          echo "If someone wants to make this eventuality not happen, perhaps let workflows run when an update to another repository happens.
+          echo "If someone wants to make this eventuality not happen, perhaps let workflows run when an update to another repository happens."
           
         else
           echo "No conflicts detected. Merging upstream master..."
