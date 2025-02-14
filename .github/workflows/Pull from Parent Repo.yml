@@ -32,7 +32,18 @@ jobs:
         # and recording the output for in a moment
         merge_result=$(git merge --no-commit upstream/master 2>&1) # Use upstream/master
       
-        if [[ ! "$merge_result" =~ "Automatic merge failed" && ! "$merge_result" =~ "CONFLICT" ]]; then
+        if [[ "$merge_result" =~ "Automatic merge failed" || "$merge_result" =~ "CONFLICT" ]]; then
+          echo "Conflicts detected during merge with upstream master."
+          echo "$merge_result" # Print the merge result (including conflicts)
+          echo "Performing action for conflicts..."
+          # I would potentially email the owner or something here
+          # Create a pull request (more complex, requires GitHub API)
+          
+        elif [[ "$merge_result" =~ "Already up to date" ]]; then
+          echo "No upstream changes detected, this was all useless."
+          echo "If someone wants to make this eventuality not happen, perhaps let workflows run when an update to another repository happens.
+          
+        else
           echo "No conflicts detected. Merging upstream master..."
           git merge upstream/master || { echo "Error: Merge failed."; exit 1; }
           git commit -m "Merged upstream master" || { echo "Error: Commit failed."; exit 1; }
@@ -41,17 +52,6 @@ jobs:
           echo "Performing action for no conflicts..."
           # Example: Run tests (replace with your desired command)
           # I would potentially build and release here, but thats hard.
-          
-        elif [[ ! "$merge_result" =~ "Already up to date" && ! "$merge_result" =~ "CONFLICT" ]]; then
-          echo "No upstream changes detected, this was all useless."
-          echo "If someone wants to make this eventuality not happen, perhaps let workflows run when an update to another repository happens.
-          
-        else
-          echo "Conflicts detected during merge with upstream master."
-          echo "$merge_result" # Print the merge result (including conflicts)
-          echo "Performing action for conflicts..."
-          # I would potentially email the owner or something here
-          # Create a pull request (more complex, requires GitHub API)
           # ...
       
           
