@@ -13,27 +13,30 @@ jobs:
         fetch-depth: 0
     - name: Check and merge from upstream
       run: |
-        # Configure Git to use your repo (important!)
+        # This is where the magic happens
+        date
+        echo Configuring Git
         git remote set-url origin https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git config --global user.email "${{ secrets.EMAIL }}"
         git config --global user.name "upstreamPuller"
       
-        # Fetch changes from your fork's master branch (not upstream yet)
+        echo Fetching
         git fetch origin master
       
-        # Add the upstream remote if it doesn't exist
+        echo Upstream
         git remote add upstream https://github.com/glfw/glfw.git
       
-        # Or, if it exists, fetch from it
+        echo Fetching
         git fetch upstream
       
-        # Check mergeability for show
+        echo TryMerge
         git merge --no-commit upstream/master 2>&1
         # and recording the output for in a moment
         merge_result=$(git merge --no-commit upstream/master 2>&1) # Use upstream/master
-      
+        
+        echo Results...
         if [[ "$merge_result" =~ "Automatic merge failed" || "$merge_result" =~ "CONFLICT" ]]; then
-          echo "Conflicts detected during merge with upstream master."
+          echo "Conflicts detected during simulated merge with upstream master."
           echo "$merge_result" # Print the merge result (including conflicts)
           echo "Performing action for conflicts..."
           # I would potentially email the owner or something here
@@ -44,7 +47,7 @@ jobs:
           echo "If someone wants to make this eventuality not happen, perhaps let workflows run when an update to another repository happens."
           
         else
-          echo "No conflicts detected. Merging upstream master..."
+          echo "No conflicts detected during sim. Actually merging..."
           git merge upstream/master || { echo "Error: Merge failed."; exit 1; }
           git commit -m "Merged upstream master" || { echo "Error: Commit failed."; exit 1; }
           git push origin master || { echo "Error: Push failed."; exit 1; } # Push to your repo
