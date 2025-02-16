@@ -47,7 +47,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: glfw-linux  # Give your artifacts a descriptive name
-                path: build-*/* # Path to the built librarie
+                path: build-*/src/* # Path to the built librarie
                 if-no-files-found: error # Fail the workflow if no files are uploaded
 
     build-macos-clang:
@@ -79,7 +79,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: glfw-macos
-                path: build-*/*
+                path: build-*/src/*
                 if-no-files-found: error
 
     build-windows-vs2022:
@@ -109,6 +109,6 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                 name: glfw-windows
-                path: build-*/*
+                path: build-*/src/*
                 if-no-files-found: error
 
