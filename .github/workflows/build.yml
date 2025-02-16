@@ -181,7 +181,14 @@ jobs:
                   });
                 };
                 await Promise.all([
-                  uploadAsset('glfw-linux', 'glfw-linux'),
-                  uploadAsset('glfw-macos', 'glfw-macos'),
-                  uploadAsset('glfw-windows', 'glfw-windows')
+                    uploadAsset('build-cocoa-shared', 'build-cocoa-shared'),
+                    uploadAsset('build-cocoa-static', 'build-cocoa-static'),
+                    uploadAsset('build-full-shared', 'build-full-shared'),
+                    uploadAsset('build-full-static', 'build-full-static'),
+                    uploadAsset('build-null-shared', 'build-null-shared'),
+                    uploadAsset('build-wayland-shared', 'build-wayland-shared'),
+                    uploadAsset('build-win32-shared-x64', 'build-win32-shared-x64'),
+                    uploadAsset('build-win32-shared-x86', 'build-win32-shared-x86'),
+                    uploadAsset('build-win32-static-x64', 'build-win32-static-x64'),
+                    uploadAsset('build-x11-shared', 'build-x11-shared')
                 ]);
