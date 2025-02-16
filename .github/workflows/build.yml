@@ -144,43 +144,52 @@ jobs:
             id: create_release
             uses: actions/github-script@v6
             with:
-              github-token: ${{ secrets.GITHUB_TOKEN }}
-              script: |
-                const fs = require('fs');
-                const tag = `on-push-${{ steps.tag_date.outputs.tag_date }}`;
-                await github.rest.git.createTag({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  tag: tag,
-                  message: `On push result ${tag}`,
-                  object: context.sha,  // SHA of the current commit
-                  type: 'commit'
-                });
-                await github.rest.git.createRef({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  ref: `refs/tags/${tag}`,
-                  sha: context.sha
-                });
-                const release = await github.rest.repos.createRelease({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  tag_name: tag,
-                  name: `RecursiveG patched GLFW on push build ${{ steps.date.outputs.date }}`,
-                  body: `This release is by a workflow (bot) that has detected a push. Likely from another workflow (bot) pulling changes from the parent repo and then applying this forks' changes to it automatically.`,
-                  draft: false,
-                  prerelease: false
-                });
-                const uploadAsset = async (name, path) => {
-                  await github.rest.repos.uploadReleaseAsset({
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                script: |
+                  const fs = require('fs');
+                  const execSync = require('child_process').execSync;
+                  
+                  // Function to create zip file
+                  const createZip = (dir) => {
+                    const zipfile = `${dir}.zip`;
+                    execSync(`zip -r ${zipfile} ${dir}`);
+                    return zipfile;
+                  };
+            
+                  const tag = `on-push-${{ steps.tag_date.outputs.tag_date }}`;
+                  await github.rest.git.createTag({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
-                    release_id: release.data.id,
-                    name: name,
-                    data: fs.readFileSync(path)
+                    tag: tag,
+                    message: `On push result ${tag}`,
+                    object: context.sha,  // SHA of the current commit
+                    type: 'commit'
                   });
-                };
-                await Promise.all([
+                  await github.rest.git.createRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `refs/tags/${tag}`,
+                    sha: context.sha
+                  });
+                  const release = await github.rest.repos.createRelease({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    tag_name: tag,
+                    name: `RecursiveG patched GLFW on push build ${{ steps.date.outputs.date }}`,
+                    body: `This release is by a workflow (bot) that has detected a push. Likely from another workflow (bot) pulling changes from the parent repo and then applying this forks' changes.`,
+                    draft: false,
+                    prerelease: false
+                  });
+                  const uploadAsset = async (name, path) => {
+                    await github.rest.repos.uploadReleaseAsset({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      release_id: release.data.id,
+                      name: name,
+                      data: fs.readFileSync(path)
+                    });
+                  };
+                  await Promise.all([
                     uploadAsset('build-cocoa-shared', 'build-cocoa-shared'),
                     uploadAsset('build-cocoa-static', 'build-cocoa-static'),
                     uploadAsset('build-full-shared', 'build-full-shared'),
@@ -191,4 +200,5 @@ jobs:
                     uploadAsset('build-win32-shared-x86', 'build-win32-shared-x86'),
                     uploadAsset('build-win32-static-x64', 'build-win32-static-x64'),
                     uploadAsset('build-x11-shared', 'build-x11-shared')
-                ]);
+                  ]);
+                    
