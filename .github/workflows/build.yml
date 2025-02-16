@@ -132,6 +132,8 @@ jobs:
             uses: actions/download-artifact@v4
             with:
               name: glfw-windows
+          - name: List files in the current directory
+            run: ls -la
           - name: Get current date and time
             id: date
             run: echo "date=$(date)" >> $GITHUB_OUTPUT
