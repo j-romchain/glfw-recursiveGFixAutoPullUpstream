@@ -111,4 +111,38 @@ jobs:
                 name: glfw-windows
                 path: build-*/src/*
                 if-no-files-found: error
-
+    create-release:
+        name: Create Release
+        runs-on: ubuntu-latest  # Or any suitable runner
+        needs: [build-linux-clang, build-macos-clang, build-windows-vs2022] # Job dependencies
+        permissions:
+          contents: write # Required for creating releases
+        steps:
+          - name: Download Linux artifacts
+            uses: actions/download-artifact@v4
+            with:
+              name: glfw-linux
+    
+          - name: Download macOS artifacts
+            uses: actions/download-artifact@v4
+            with:
+              name: glfw-macos
+    
+          - name: Download Windows artifacts
+            uses: actions/download-artifact@v4
+            with:
+              name: glfw-windows
+          - name: Get current date and time
+            id: date
+            run: echo "::set-output name=date::$(date '+%Y-%m-%d %H:%M:%S')"
+          - name: Create Release
+            uses: softprops/action-gh-release@v1
+            with:
+              files: |
+                glfw-linux/*
+                glfw-macos/*
+                glfw-windows/*
+              token: ${{ secrets.GITHUB_TOKEN }}
+              name: RecursiveG patched GLFW on push build ${{ steps.date.outputs.date }}
+              body: |
+                This release is by a workflow (bot) that has detected a push. Likely from another workflow (bot) pulling changes from the parent repo and then applying this forks' changes to it and pushing the result.
