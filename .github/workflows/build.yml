@@ -159,6 +159,7 @@ jobs:
                   ref: `refs/tags/${tag}`,
                   sha: context.sha
                 });
+                return { name: tag }
           - name: Create Release
             uses: softprops/action-gh-release@v2
             with:
