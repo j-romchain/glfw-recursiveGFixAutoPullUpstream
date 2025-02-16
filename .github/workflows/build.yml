@@ -149,7 +149,7 @@ jobs:
                   repo: context.repo.repo,
                   tag: tag,
                   message: `On push result ${tag}`,
-                  sha: context.sha,  // SHA of the current commit
+                  object: context.sha,  // SHA of the current commit
                   type: 'commit'
                 });
           - name: Create Release
