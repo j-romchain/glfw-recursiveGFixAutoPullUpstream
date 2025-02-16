@@ -152,6 +152,12 @@ jobs:
                   object: context.sha,  // SHA of the current commit
                   type: 'commit'
                 });
+                await github.rest.git.createRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `refs/tags/${tag}`,
+                  sha: context.sha
+                });
           - name: Create Release
             uses: softprops/action-gh-release@v1
             with:
