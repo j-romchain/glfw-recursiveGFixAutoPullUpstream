@@ -179,7 +179,7 @@ jobs:
                   });
                 };
                 await Promise.all([
-                  uploadAsset('glfw-linux', 'build-*/src/*'),
-                  uploadAsset('glfw-macos', 'build-*/src/*'),
-                  uploadAsset('glfw-windows', 'build-*/src/*')
+                  uploadAsset('glfw-linux', 'glfw-linux'),
+                  uploadAsset('glfw-macos', 'glfw-macos'),
+                  uploadAsset('glfw-windows', 'glfw-windows')
                 ]);
