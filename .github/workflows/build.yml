@@ -138,8 +138,8 @@ jobs:
           - name: Get current date and time for tag
             id: tag_date
             run: echo "tag_date=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
-          - name: Create an annotated tag
-            id: tag
+          - name: Create tag and release
+            id: create_release
             uses: actions/github-script@v6
             with:
               github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -159,16 +159,26 @@ jobs:
                   ref: `refs/tags/${tag}`,
                   sha: context.sha
                 });
-                return { name: tag }
-          - name: Create Release
-            uses: softprops/action-gh-release@v2
-            with:
-              tag_name: ${{ steps.tag.outputs.name }}
-              files: |
-                glfw-linux/*
-                glfw-macos/*
-                glfw-windows/*
-              token: ${{ secrets.GITHUB_TOKEN }}
-              name: RecursiveG patched GLFW on push build ${{ steps.date.outputs.date }}
-              body: |
-                This release is by a workflow (bot) that has detected a push. Likely from another workflow (bot) pulling changes from the parent repo and then applying this forks' changes to it and pushing the result.
+                const release = await github.rest.repos.createRelease({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag_name: tag,
+                  name: `RecursiveG patched GLFW on push build ${{ steps.date.outputs.date }}`,
+                  body: `This release is by a workflow (bot) that has detected a push. Likely from another workflow (bot) pulling changes from the parent repo and then applying this forks' changes to it automatically.`,
+                  draft: false,
+                  prerelease: false
+                });
+                const uploadAsset = async (name, path) => {
+                  await github.rest.repos.uploadReleaseAsset({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    release_id: release.data.id,
+                    name: name,
+                    data: fs.readFileSync(path)
+                  });
+                };
+                await Promise.all([
+                  uploadAsset('glfw-linux', 'build-*/src/*'),
+                  uploadAsset('glfw-macos', 'build-*/src/*'),
+                  uploadAsset('glfw-windows', 'build-*/src/*')
+                ]);
