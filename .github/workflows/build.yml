@@ -134,7 +134,24 @@ jobs:
               name: glfw-windows
           - name: Get current date and time
             id: date
-            run: echo "::set-output name=date::$(date '+%Y-%m-%d %H:%M:%S')"
+            run: echo "date=$(date)" >> $GITHUB_OUTPUT
+          - name: Get current date and time for tag
+            id: tag_date
+            run: echo "tag_date=$(date '+%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
+          - name: Create an annotated tag
+            uses: actions/github-script@v6
+            with:
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              script: |
+                const tag = `on-push-${{ steps.tag_date.outputs.tag_date }}`;
+                await github.rest.git.createTag({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  tag: tag,
+                  message: `On push result ${tag}`,
+                  sha: context.sha,  // SHA of the current commit
+                  type: 'commit'
+                });
           - name: Create Release
             uses: softprops/action-gh-release@v1
             with:
