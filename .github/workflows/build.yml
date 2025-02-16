@@ -44,7 +44,7 @@ jobs:
               run: cmake --build build-full-shared --parallel
 
             - name: Upload Linux artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: glfw-linux  # Give your artifacts a descriptive name
                 path: build-linux-*/* # Path to the built libraries (adjust as needed)
@@ -76,7 +76,7 @@ jobs:
             - name: Build Cocoa shared library
               run: cmake --build build-cocoa-shared --parallel
             - name: Upload macOS artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: glfw-macos
                 path: build-cocoa-*/* # Adjust path
@@ -106,7 +106,7 @@ jobs:
             - name: Build Win32 shared x64 library
               run: cmake --build build-win32-shared-x64 --parallel
             - name: Upload Windows artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: glfw-windows
                 path: build-win32-*/* # Adjust path
