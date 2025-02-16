@@ -48,7 +48,7 @@ jobs:
               with:
                 name: glfw-linux  # Give your artifacts a descriptive name
                 path: build-linux-*/* # Path to the built libraries (adjust as needed)
-                if-no-files: error # Fail the workflow if no files are uploaded
+                if-no-files-found: error # Fail the workflow if no files are uploaded
 
     build-macos-clang:
         name: macOS (Clang)
@@ -80,7 +80,7 @@ jobs:
               with:
                 name: glfw-macos
                 path: build-cocoa-*/* # Adjust path
-                if-no-files: error
+                if-no-files-found: error
 
     build-windows-vs2022:
         name: Windows (VS2022)
@@ -110,5 +110,5 @@ jobs:
               with:
                 name: glfw-windows
                 path: build-win32-*/* # Adjust path
-                if-no-files: error
+                if-no-files-found: error
 
