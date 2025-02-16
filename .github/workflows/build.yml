@@ -144,8 +144,8 @@ jobs:
             id: create_release
             uses: actions/github-script@v6
             with:
-                github-token: ${{ secrets.GITHUB_TOKEN }}
-                script: |
+              github-token: ${{ secrets.GITHUB_TOKEN }}
+              script: |
                   const fs = require('fs');
                   const execSync = require('child_process').execSync;
                   
@@ -155,7 +155,6 @@ jobs:
                     execSync(`zip -r ${zipfile} ${dir}`);
                     return zipfile;
                   };
-            
                   const tag = `on-push-${{ steps.tag_date.outputs.tag_date }}`;
                   await github.rest.git.createTag({
                     owner: context.repo.owner,
@@ -180,7 +179,13 @@ jobs:
                     draft: false,
                     prerelease: false
                   });
-                  const uploadAsset = async (name, path) => {
+                  const uploadAsset = async (name, passedPath) => {
+                    let path = passedPath
+                    if (fs.lstatSync(passedPath).isDirectory()) {
+                      path = createZip(passedPath);
+                      name += '.zip';
+                    }
+                    createZip
                     await github.rest.repos.uploadReleaseAsset({
                       owner: context.repo.owner,
                       repo: context.repo.repo,
