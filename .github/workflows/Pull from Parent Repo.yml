@@ -32,7 +32,7 @@ jobs:
         echo TryMerge
         # git merge --no-commit upstream/master 2>&1
         # and recording the output for in a moment
-        merge_result=$(git merge --no-commit upstream/master 2>&1) # Use upstream/master
+        merge_result=$(git merge -m "Merged from upstream on $(date)" upstream/master 2>&1) # Use upstream/master
         echo $merge_result
         echo Results...
         if [[ "$merge_result" =~ "Automatic merge failed" || "$merge_result" =~ "CONFLICT" ]]; then
@@ -48,8 +48,8 @@ jobs:
           
         else
           echo "No conflicts detected during sim. Actually merging..."
-          git merge upstream/master || { echo "Error: Merge failed."; exit 1; }
-          git commit -m "Merged from upstream on "$(date) || { echo "Error: Commit failed."; exit 1; }
+          # git merge upstream/master || { echo "Error: Merge failed."; exit 1; }
+          # git commit -m "Merged from upstream on $(date)" || { echo "Error: Commit failed."; exit 1; }
           git push origin master || { echo "Error: Push failed."; exit 1; } # Push to your repo
       
           echo "Performing action for no conflicts..."
